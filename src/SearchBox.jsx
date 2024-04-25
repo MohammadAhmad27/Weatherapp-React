@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import config from '../config'; // Import the config file
+// import config from '../config'; // Import the config file
 import "./SearchBox.css";
 
 export default function SearchBox({ updateInfo }) {
     const [city, setCity] = useState("");
     const [error, setError] = useState(false);
 
-    const API_URL = config.API_URL;
-    const API_KEY = config.API_KEY;;
+    // While using config.js
+    // const API_URL = config.API_URL;
+    // const API_KEY = config.API_KEY;
+
+   
 
     const getWeatherInfo = async () => {
         try {
-            const response = await fetch(`${API_URL}?q=${city}&appid=${API_KEY}&units=metric`);
+            const response = await fetch(`${import.meta.env.VITE_API_URL}?q=${city}&appid=${import.meta.env.VITE_API_KEY}&units=metric`);
             if (!response.ok) {
                 throw new Error('Failed to fetch weather data');
             }
