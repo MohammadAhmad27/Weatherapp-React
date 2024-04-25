@@ -1,21 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import "./SearchBox.css"
+import config from '../config'; // Import the config file
+import "./SearchBox.css";
 
 export default function SearchBox({ updateInfo }) {
     const [city, setCity] = useState("");
     const [error, setError] = useState(false);
 
-    const API_URL = "https://api.openweathermap.org/data/2.5/weather";
-    const API_KEY = "2ff8efc60bb4d0fe7cde898fa2d8c09d";
+    const API_URL = config.API_URL;
+    const API_KEY = config.API_KEY;;
 
     const getWeatherInfo = async () => {
         try {
-            let response = await fetch(`${API_URL}?q=${city}&appid=${API_KEY}&units=metric`);
-            let jsonResponse = await response.json();
+            const response = await fetch(`${API_URL}?q=${city}&appid=${API_KEY}&units=metric`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch weather data');
+            }
+            const jsonResponse = await response.json();
             console.log(jsonResponse);
-            let result = {
+            const result = {
                 city: city,
                 temp: jsonResponse.main.temp,
                 tempMin: jsonResponse.main.temp_min,
@@ -25,9 +29,10 @@ export default function SearchBox({ updateInfo }) {
                 weather: jsonResponse.weather[0].description
             };
             console.log(result);
-            return (result);
+            return result;
         } catch (err) {
-            throw err;
+            console.error(err);
+            throw err; // Rethrow the error for the parent component to handle
         }
     };
 
@@ -36,12 +41,11 @@ export default function SearchBox({ updateInfo }) {
     };
 
     const handleSubmit = async (event) => {
+        event.preventDefault();
         try {
-            event.preventDefault();
-            console.log(city);
-            setCity("");
-            let newInfo = await getWeatherInfo();
+            const newInfo = await getWeatherInfo();
             updateInfo(newInfo);
+            setError(false); // Reset error state
         } catch (err) {
             setError(true);
         }
@@ -52,11 +56,11 @@ export default function SearchBox({ updateInfo }) {
             <form onSubmit={handleSubmit}>
                 <TextField id="city" label="City Name" variant="outlined" value={city} required onChange={handleChange} />
                 <br /> <br />
-                <Button variant="contained" type='submit' >
+                <Button variant="contained" type='submit'>
                     Search
                 </Button>
-                {error && <p className='error'>No such place exists in our API!</p> }
+                {error && <p className='error'>No such place exists in our API!</p>}
             </form>
         </div>
-    )
+    );
 }
