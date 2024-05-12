@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 // import config from '../config'; // Import the config file
@@ -7,12 +7,18 @@ import "./SearchBox.css";
 export default function SearchBox({ updateInfo }) {
     const [city, setCity] = useState("");
     const [error, setError] = useState(false);
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        inputRef.current.focus();
+    }, [city])
+
 
     // While using config.js
     // const API_URL = config.API_URL;
     // const API_KEY = config.API_KEY;
 
-   
+
 
     const getWeatherInfo = async () => {
         try {
@@ -48,6 +54,7 @@ export default function SearchBox({ updateInfo }) {
         try {
             const newInfo = await getWeatherInfo();
             updateInfo(newInfo);
+            setCity("");
             setError(false); // Reset error state
         } catch (err) {
             setError(true);
@@ -57,7 +64,7 @@ export default function SearchBox({ updateInfo }) {
     return (
         <div className='Search-box'>
             <form onSubmit={handleSubmit}>
-                <TextField id="city" label="City Name" variant="outlined" value={city} required onChange={handleChange} />
+                <TextField id="city" label="City Name" variant="outlined" ref={inputRef} value={city} onChange={handleChange} required  />
                 <br /> <br />
                 <Button variant="contained" type='submit'>
                     Search
