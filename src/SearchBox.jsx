@@ -60,6 +60,7 @@ export default function SearchBox({ updateInfo }) {
     } catch (err) {
       setError(true);
     }
+    inputRef.current.focus(); // Focus the input field again
   };
 
   return (
@@ -69,7 +70,7 @@ export default function SearchBox({ updateInfo }) {
           id="city"
           label="City Name"
           variant="outlined"
-          ref={inputRef}
+          inputRef={inputRef} // Use inputRef instead of ref
           value={city}
           onChange={handleChange}
           required
